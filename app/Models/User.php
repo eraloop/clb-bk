@@ -20,7 +20,11 @@ class User extends Authenticatable
     protected $fillable = [
         'phone',
         'email',
-        'password'
+        'password',
+        'sin',
+        'eligibility_status',
+        'resp_promoter',
+        
     ];
 
     /**

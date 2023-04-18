@@ -30,52 +30,55 @@ class AuthController extends Controller
     {
 
         $validated = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required|min:6'
         ]);
 
-            if ($validated->fails()) {
-                return response(['message' => $validated->errors()->first()], 403);
-            }
+        if ($validated->fails()) {
+            return response(['message' => $validated->errors()->first()], 403);
+        }
 
-            if (!(auth()->attempt($request->all()))) {
+        if (!(auth('web')->attempt($request->all()))) {
+            return response([
+                "title" => "Ooooppppps",
+                'message' => "User email or password not correct",
+                "user"=> $request->all(),
+                "statusCode" => 401,
+            ], 401);
+        }
+
+        $user = User::where(['email' => $request->email])->first();
+
+        Auth::guard('api')->check($user);
+
+        if(isset($user) && Hash::check($request->password, $user->password)){
+            $token = $user->createToken('authToken')->accessToken;
+
+            if ($token) {
                 return response([
-                    "title" => "Ooooppppps",
-                    'message' => "User email or password not correct",
-                    "user"=> $request->all(),
-                    "statusCode" => 401,
-                ], 401);
-
+                    "title"=> "Success",
+                    "message" => "User authentication successful",
+                    'success' => true,
+                    'user' => $user,
+                    "statusCode" => 201,
+                    'token' => $token,
+                ], 201);
+            } else {
+                return response([
+                    "title" => "Something when wrong",
+                    'message' => "Server error,Please try again",
+                    "code" => 500,
+                ], 500);
             }
-
-            $user = User::where(['email' => $request->email])->first();
-            Auth::guard('api')->check($user);
-            if(isset($user) && Hash::check($request->password, $user->password)){
-                $token = $user->createToken('authToken')->accessToken;
-                if ($token) {
-                    return response([
-                        "title"=> "Success",
-                        "message" => "User authentication successful",
-                        'success' => true,
-                        'user' => $user,
-                        "statusCode" => 201,
-                        'token' => $token,
-
-                    ], 201);
-                } else {
-                    return response([
-                "title" => "Something when wrong",
-                'message' => "Server error,Please try again",
-                "code" => 500,
-            ], 500);
-                }
-            }
+        }
 
     }
 
     public function register(Request $request)
     {
+        return response(request()->all(), 200);
         $validated = Validator::make($request->all(),[
+            "name"=> "required",
             "email" => "required",
             "password" => 'required',
             "phone" => 'required',
@@ -99,9 +102,13 @@ class AuthController extends Controller
 
         $user = User::create(
             [
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
+                'name'=> $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone' => $request->phone,
+                'eligibility_status'=> $request->eligibility_status,
+                'resp_promoter'=> $request->resp_promoter,
+                'sin' => $request->sin,
             ]);
 
         Auth::guard('api')->check($user);

@@ -19,51 +19,27 @@ class UserController extends Controller
         'success' => true], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function checkUser(Request $request)
     {
-        //
+        $user = User::where(['email' => $request->email])->first();
+        if(!$user){
+            return response([
+                "title" => "Ooooppppps",
+                'message' => "Account not found",
+                "user"=> $request->all(),
+                "statusCode" => 404,
+            ], 404);
+        }
+        return response([
+            "title" => "Success",
+            'message' => "User account found",
+            "user"=> $request->all(),
+            "statusCode" => 200,
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function resetPassword(){
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(r $r)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(r $r)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, r $r)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(r $r)
-    {
-        //
-    }
 }
