@@ -40,6 +40,13 @@ class UserController extends Controller
 
     public function resetPassword(){
 
+
+    }
+
+    public function updateUserInfo(){
+        // 'eligibility_status'=> $request->eligibility_status,
+        // 'resp_promoter'=> $request->resp_promoter,
+        // 'sin' => $request->sin,
     }
 
 }

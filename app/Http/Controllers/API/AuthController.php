@@ -76,7 +76,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        return response(request()->all(), 200);
+
         $validated = Validator::make($request->all(),[
             "name"=> "required",
             "email" => "required",
@@ -106,9 +106,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'phone' => $request->phone,
-                'eligibility_status'=> $request->eligibility_status,
-                'resp_promoter'=> $request->resp_promoter,
-                'sin' => $request->sin,
+
             ]);
 
         Auth::guard('api')->check($user);
