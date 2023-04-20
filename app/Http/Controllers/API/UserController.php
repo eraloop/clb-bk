@@ -12,12 +12,13 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return response([ 'users' =>  $users,
+        $users = $request->user();
+        return response([ 'user' =>  $users,
         'success' => true], 200);
     }
+
 
     public function checkUser(Request $request)
     {

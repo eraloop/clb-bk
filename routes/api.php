@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-
+use App\Http\Controllers\API\UserController;
 
 // login user
 Route::post('login', [AuthController::class, 'login']);
@@ -14,6 +14,6 @@ Route::post('contact', [SupportController::class, 'contact']);
 
 Route::middleware('auth:api')->group(function (){
 // get user profile
-Route::get('profile', [AuthController::class, 'index']);
+    Route::get('profile', [UserController::class, 'index']);
 
 });
