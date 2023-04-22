@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('name');
             $table->string('password');
+            $table->string('type')->nullable();
             $table->string('email')->unique();
             $table->string('eligibility_status')->nullable();
             $table->string('resp_promoter')->nullable();

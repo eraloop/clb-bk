@@ -38,7 +38,7 @@ class AuthController extends Controller
             return response(['message' => $validated->errors()->first()], 403);
         }
 
-        if (!(auth('web')->attempt($request->all()))) {
+        if (!(auth()->validate($request->all()))) {
             return response([
                 "title" => "Ooooppppps",
                 'message' => "User email or password not correct",
@@ -49,11 +49,11 @@ class AuthController extends Controller
 
         $user = User::where(['email' => $request->email])->first();
 
-        Auth::guard('api')->check($user);
+        Auth::guard()->check($user);
+
 
         if(isset($user) && Hash::check($request->password, $user->password)){
             $token = $user->createToken('authToken')->accessToken;
-
             if ($token) {
                 return response([
                     "title"=> "Success",
@@ -132,4 +132,62 @@ class AuthController extends Controller
         }
 
     }
+
+    public function check_user_account(Request $request)
+    {
+        $validated = Validator::make($request->all(),[
+            "email" => "required",
+        ]);
+
+        if ($validated->fails()) {
+                return response(['message' => $validated->errors()->all()], 403);
+        };
+
+        $user = User::where(['email' => $request->email])->first();
+
+        if(!$user){
+            return response([
+                "title" => "Ooooppppps",
+                'message' => "Account not found",
+                "user"=> $request->all(),
+                "statusCode" => 404,
+            ], 404);
+        }
+
+        return response([
+            "title" => "Success",
+            'message' => "User account found",
+            "user"=> $request->all(),
+            "statusCode" => 200,
+        ], 200);
+    }
+
+    public function set_new_password(Request $request){
+
+        $validated = Validator::make($request->all(),[
+            "email" => "required",
+        ]);
+
+        if ($validated->fails()) {
+                return response(['message' => $validated->errors()->all()], 403);
+        };
+
+        $user = User::where(['email' => $request->email])->first();
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response([
+            "title" => "Success",
+            "message"=> "Password reset successful",
+            "user" => $user,
+        ]);
+
+    }
+
+
+
+
+
+
 }

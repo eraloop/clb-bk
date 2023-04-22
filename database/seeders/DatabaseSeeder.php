@@ -12,13 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
 
-        \App\Models\User::factory()->create([
-            'name' => 'Admin',
-            'phone' => '6555555555',
-            'email' => 'admin@clb.com',
-            'password'=> 'password'
-        ]);
+        $this->call(AdminSeeder::class);
+        $this->call(UserSeeder::class);
+
     }
 }

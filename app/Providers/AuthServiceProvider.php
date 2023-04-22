@@ -22,10 +22,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
-        // Passport::hashClientSecrets();
-        // $this->registerPolicies();
-        //
-        // Passport::routes();
+        Passport::ignoreRoutes();
+        Passport::hashClientSecrets();
+        $this->registerPolicies();
     }
 }

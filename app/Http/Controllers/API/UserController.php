@@ -20,31 +20,14 @@ class UserController extends Controller
     }
 
 
-    public function checkUser(Request $request)
-    {
-        $user = User::where(['email' => $request->email])->first();
-        if(!$user){
-            return response([
-                "title" => "Ooooppppps",
-                'message' => "Account not found",
-                "user"=> $request->all(),
-                "statusCode" => 404,
-            ], 404);
-        }
-        return response([
-            "title" => "Success",
-            'message' => "User account found",
-            "user"=> $request->all(),
-            "statusCode" => 200,
-        ], 200);
-    }
 
-    public function resetPassword(){
+    public function update_user_details(Request $request){
+
+        $user = $request->user();
+
+        $user->email = $request->email;
 
 
-    }
-
-    public function updateUserInfo(){
         // 'eligibility_status'=> $request->eligibility_status,
         // 'resp_promoter'=> $request->resp_promoter,
         // 'sin' => $request->sin,
