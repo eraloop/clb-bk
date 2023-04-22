@@ -13,29 +13,22 @@ class MailController extends Controller
 {
     public function contact_us(Request $request){
 
-        $validator = Validator::make($request->all(),[
+        $validated = Validator::make($request->all(),[
             'name' => 'required',
             'email' => 'required',
-            'context'=> 'required',
             'resp_promoter'=> 'required'
         ]);
 
-        if($validator->fails()){
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'message' => $validator->errors()
-                ], 422
-            );
-        }
-
+        if ($validated->fails()) {
+            return response(['message' => $validated->errors()->first()], 403);
+        };
 
         $email = $request->all()['email'];
             Mail::to($email)->send(new UserContactUs($email, $request->all()));
-            return new JsonResponse(
+            return response(
                 [
                     'success' => true,
-                    'message' => "Thank you for contacting customer support,your request will be handled as soon as possible"
+                    'message' => "Thank you, Your request will be handled as soon as possible"
                 ], 200
             );
     }

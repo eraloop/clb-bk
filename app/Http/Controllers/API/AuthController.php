@@ -38,7 +38,7 @@ class AuthController extends Controller
             return response(['message' => $validated->errors()->first()], 403);
         }
 
-        if (!(auth()->validate($request->all()))) {
+        if (!(auth('web')->validate($request->all()))) {
             return response([
                 "title" => "Ooooppppps",
                 'message' => "User email or password not correct",
@@ -49,8 +49,7 @@ class AuthController extends Controller
 
         $user = User::where(['email' => $request->email])->first();
 
-        Auth::guard()->check($user);
-
+        Auth::guard('api')->check($user);
 
         if(isset($user) && Hash::check($request->password, $user->password)){
             $token = $user->createToken('authToken')->accessToken;
@@ -135,12 +134,13 @@ class AuthController extends Controller
 
     public function check_user_account(Request $request)
     {
+
         $validated = Validator::make($request->all(),[
             "email" => "required",
         ]);
 
         if ($validated->fails()) {
-                return response(['message' => $validated->errors()->all()], 403);
+            return response(['message' => $validated->errors()->first()], 403);
         };
 
         $user = User::where(['email' => $request->email])->first();
@@ -166,28 +166,34 @@ class AuthController extends Controller
 
         $validated = Validator::make($request->all(),[
             "email" => "required",
+            "password" => "required"
         ]);
 
         if ($validated->fails()) {
-                return response(['message' => $validated->errors()->all()], 403);
+                return response(['message' => $validated->errors()->first()], 403);
         };
 
         $user = User::where(['email' => $request->email])->first();
 
         $user->password = Hash::make($request->password);
-        $user->save();
 
-        return response([
-            "title" => "Success",
-            "message"=> "Password reset successful",
-            "user" => $user,
-        ]);
+        if($user->save()){
+            return response([
+                "title" => "Success",
+                "message"=> "Password reset successful",
+                "user" => $user,
+            ], 200);
+            
+        }else{
+            return response([
+                "title" => "Server error",
+                'message' => "Something when wrong, Please try again",
+                "user"=> $request->all(),
+                "statusCode" => 500,
+            ], 500);
+        }
+
 
     }
-
-
-
-
-
 
 }
